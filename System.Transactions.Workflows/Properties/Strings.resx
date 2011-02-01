@@ -126,13 +126,19 @@
   <data name="WorkflowAlreadyCompletedCannotCompleteAgain" xml:space="preserve">
     <value>Workflow already completed, cannot complete again.</value>
   </data>
-  <data name="WorkflowAlreadyCompletedCannotRollback" xml:space="preserve">
-    <value>Workflow already completed, cannot rollback.</value>
+  <data name="WorkflowAlreadyCompletedCannotRollBack" xml:space="preserve">
+    <value>Workflow already completed, cannot roll back.</value>
+  </data>
+  <data name="WorkflowAlreadyRolledBackCannotComplete" xml:space="preserve">
+    <value>Workflow already rolled back, cannot complete.</value>
+  </data>
+  <data name="WorkflowAlreadyRolledBackCannotRollBackAgain" xml:space="preserve">
+    <value>Workflow already rolled back, cannot roll back again.</value>
   </data>
   <data name="WorkflowDisposedCannotComplete" xml:space="preserve">
     <value>Workflow disposed, cannot complete.</value>
   </data>
-  <data name="WorkflowDisposedCannotRollback" xml:space="preserve">
-    <value>Workflow disposed, cannot rollback.</value>
+  <data name="WorkflowDisposedCannotRollBack" xml:space="preserve">
+    <value>Workflow disposed, cannot roll back.</value>
   </data>
 </root>

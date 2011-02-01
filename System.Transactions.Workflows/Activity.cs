@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace System.Transactions.Activities
+namespace System.Transactions.Workflows
 {
     public class Activity : IActivity
     {
@@ -34,7 +34,7 @@ namespace System.Transactions.Activities
             this.Executed = true;
         }
 
-        public IActivity Compensate(Action action)
+        public IActivity CompensateWith(Action action)
         {
             if (this.Compensation != null)
             {
@@ -44,7 +44,7 @@ namespace System.Transactions.Activities
             return this;
         }
 
-        public IActivity Cancel(Action action)
+        public IActivity CancelWith(Action action)
         {
             if (this.Cancellation != null)
             {
@@ -54,7 +54,7 @@ namespace System.Transactions.Activities
             return this;
         }
 
-        void ICompensableActivity.ExecuteCompensation()
+        internal void Compensate()
         {
             if (this.Compensation != null)
             {
@@ -62,7 +62,7 @@ namespace System.Transactions.Activities
             }
         }
 
-        void ICancellableActivity.ExecuteCancellation()
+        internal void Cancel()
         {
             if (this.Cancellation != null)
             {

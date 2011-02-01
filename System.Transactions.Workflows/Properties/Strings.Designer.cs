@@ -88,11 +88,29 @@ namespace System.Transactions.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Workflow already completed, cannot rollback..
+        ///   Looks up a localized string similar to Workflow already completed, cannot roll back..
         /// </summary>
-        internal static string WorkflowAlreadyCompletedCannotRollback {
+        internal static string WorkflowAlreadyCompletedCannotRollBack {
             get {
-                return ResourceManager.GetString("WorkflowAlreadyCompletedCannotRollback", resourceCulture);
+                return ResourceManager.GetString("WorkflowAlreadyCompletedCannotRollBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow already rolled back, cannot complete..
+        /// </summary>
+        internal static string WorkflowAlreadyRolledBackCannotComplete {
+            get {
+                return ResourceManager.GetString("WorkflowAlreadyRolledBackCannotComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow already rolled back, cannot roll back again..
+        /// </summary>
+        internal static string WorkflowAlreadyRolledBackCannotRollBackAgain {
+            get {
+                return ResourceManager.GetString("WorkflowAlreadyRolledBackCannotRollBackAgain", resourceCulture);
             }
         }
         
@@ -106,11 +124,11 @@ namespace System.Transactions.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Workflow disposed, cannot rollback..
+        ///   Looks up a localized string similar to Workflow disposed, cannot roll back..
         /// </summary>
-        internal static string WorkflowDisposedCannotRollback {
+        internal static string WorkflowDisposedCannotRollBack {
             get {
-                return ResourceManager.GetString("WorkflowDisposedCannotRollback", resourceCulture);
+                return ResourceManager.GetString("WorkflowDisposedCannotRollBack", resourceCulture);
             }
         }
     }

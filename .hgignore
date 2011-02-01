@@ -1,3 +1,6 @@
 relre:bin
 relre:obj
 relre:.suo
+relre:testsettings
+relre:vsmdi
+relre:TestResults

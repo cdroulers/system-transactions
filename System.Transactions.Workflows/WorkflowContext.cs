@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Transactions.Activities;
+using System.Collections.ObjectModel;
 
-namespace System.Transactions
+namespace System.Transactions.Workflows
 {
-    public struct WorkflowContext : IDisposable
+    public class WorkflowContext : IDisposable
     {
         public bool Completed { get; private set; }
+        public bool RolledBack { get; private set; }
         private bool _disposed;
+
+        private readonly Collection<Activity> _activities = new Collection<Activity>();
 
         public void Complete()
         {
             if (this.Completed)
             {
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyCompletedCannotCompleteAgain);
+            }
+            if (this.RolledBack)
+            {
+                throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyRolledBackCannotComplete);
             }
             if (this._disposed)
             {
@@ -27,18 +34,34 @@ namespace System.Transactions
             // TODO: Execute complete stuff (is there any?)
         }
 
-        public void Rollback()
+        public void RollBack()
         {
             if (this.Completed)
             {
-                throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyCompletedCannotRollback);
+                throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyCompletedCannotRollBack);
+            }
+            if (this.RolledBack)
+            {
+                throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyRolledBackCannotRollBackAgain);
             }
             if (this._disposed)
             {
-                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotRollback);
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotRollBack);
             }
 
-            // TODO: Execute rollback stuff
+            foreach (var activity in this._activities)
+            {
+                if (activity.Executed)
+                {
+                    activity.Compensate();
+                }
+                else if (activity.IsExecuting)
+                {
+                    activity.Cancel();
+                }
+            }
+
+            this.RolledBack = true;
         }
 
         public void Dispose()
@@ -47,7 +70,7 @@ namespace System.Transactions
             {
                 if (!this.Completed)
                 {
-                    this.Rollback();
+                    this.RollBack();
                 }
             }
             finally
@@ -58,7 +81,9 @@ namespace System.Transactions
 
         public IActivity Act(Action action)
         {
-            return new Activity(this, action);
+            var activity = new Activity(this, action);
+            this._activities.Add(activity);
+            return activity;
         }
     }
 }
