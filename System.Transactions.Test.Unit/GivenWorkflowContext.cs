@@ -163,5 +163,82 @@ namespace System.Transactions.Test.Unit
             _moq.Verify(m => m.DoSomething(It.IsAny<int>()), Times.Once());
             _moq.Verify(m => m.RevertSomething(It.IsAny<int>()), Times.Once());
         }
+
+        [TestMethod]
+        public void When_Calling_Act_And_CancelWith_Execute_But_Exception_During_Then_Action_Is_Called_And_Cancelled()
+        {
+            _moq.Setup(m => m.DoSomething(It.IsAny<int>())).Throws(new ApplicationException(ExceptionMessage));
+            try
+            {
+                using (_context)
+                {
+                    _context.Act(() => _moqObject.DoSomething(1)).CancelWith(() => _moqObject.CancelSomething(1)).Execute();
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Assert.AreEqual(ExceptionMessage, e.Message);
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moq.Verify(m => m.DoSomething(It.IsAny<int>()), Times.Once());
+            _moq.Verify(m => m.CancelSomething(It.IsAny<int>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void When_Calling_Act_And_CompensateWith_And_CancelWith_Execute_But_Exception_During_Then_Action_Is_Called_And_Cancelled_And_First_Is_Compensated()
+        {
+            _moq.Setup(m => m.DoSomething(2)).Throws(new ApplicationException(ExceptionMessage));
+            try
+            {
+                using (_context)
+                {
+                    _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1)).Execute();
+
+                    _context.Act(() => _moqObject.DoSomething(2)).CancelWith(() => _moqObject.CancelSomething(2)).Execute();
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Assert.AreEqual(ExceptionMessage, e.Message);
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Once());
+            _moq.Verify(m => m.CancelSomething(2), Times.Once());
+        }
+
+        [TestMethod]
+        public void When_Calling_Act_And_CompensateWith_And_CancelWith_Execute_But_Exception_During_Then_Action_Is_Called_And_Cancelled_And_First_Is_Compensated_And_Last_Is_Never_Called()
+        {
+            _moq.Setup(m => m.DoSomething(2)).Throws(new ApplicationException(ExceptionMessage));
+            try
+            {
+                using (_context)
+                {
+                    _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1)).Execute();
+
+                    _context.Act(() => _moqObject.DoSomething(2)).CancelWith(() => _moqObject.CancelSomething(2)).Execute();
+
+                    _moqObject.DoSomething(3);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Assert.AreEqual(ExceptionMessage, e.Message);
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Once());
+            _moq.Verify(m => m.CancelSomething(2), Times.Once());
+            _moq.Verify(m => m.DoSomething(3), Times.Never());
+        }
     }
 }
