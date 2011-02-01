@@ -68,7 +68,7 @@ namespace System.Transactions.Workflows
         {
             try
             {
-                if (!this.Completed)
+                if (!this.Completed && !this.RolledBack)
                 {
                     this.RollBack();
                 }
