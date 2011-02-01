@@ -12,7 +12,7 @@ namespace System.Transactions.Workflows
         public bool RolledBack { get; private set; }
         private bool _disposed;
 
-        private readonly Collection<Activity> _activities = new Collection<Activity>();
+        private readonly Collection<BaseActivity> _activities = new Collection<BaseActivity>();
 
         public void Complete()
         {
@@ -84,6 +84,41 @@ namespace System.Transactions.Workflows
             var activity = new Activity(this, action);
             this._activities.Add(activity);
             return activity;
+        }
+
+        public void Execute(Action action, Action compensateWith, Action cancelWith)
+        {
+            var activity = this.Act(action);
+            if (compensateWith != null)
+            {
+                activity.CompensateWith(compensateWith);
+            }
+            if (cancelWith != null)
+            {
+                activity.CancelWith(cancelWith);
+            }
+            activity.Execute();
+        }
+
+        public IActivityWithResult<T> Act<T>(Func<T> action)
+        {
+            var activity = new ActivityWithResult<T>(this, action);
+            this._activities.Add(activity);
+            return activity;
+        }
+
+        public T Execute<T>(Func<T> action, Action<T> compensateWith, Action cancelWith)
+        {
+            var activity = this.Act(action);
+            if (compensateWith != null)
+            {
+                activity.CompensateWith(compensateWith);
+            }
+            if (cancelWith != null)
+            {
+                activity.CancelWith(cancelWith);
+            }
+            return activity.Execute();
         }
     }
 }

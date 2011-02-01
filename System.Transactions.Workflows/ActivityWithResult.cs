@@ -6,15 +6,17 @@ using System.Collections.ObjectModel;
 
 namespace System.Transactions.Workflows
 {
-    public class Activity : BaseActivity, IActivity
+    public class ActivityWithResult<T> : BaseActivity, IActivityWithResult<T>
     {
-        public Action Action { get; private set; }
+        public Func<T> Action { get; private set; }
 
-        public Action Compensation { get; private set; }
+        public Action<T> Compensation { get; private set; }
 
         public Action Cancellation { get; private set; }
 
-        public Activity(WorkflowContext context, Action action)
+        private T Result { get; set; }
+
+        public ActivityWithResult(WorkflowContext context, Func<T> action)
             : base(context)
         {
             if (action == null)
@@ -24,15 +26,16 @@ namespace System.Transactions.Workflows
             this.Action = action;
         }
 
-        public void Execute()
+        public T Execute()
         {
             this.IsExecuting = true;
-            this.Action();
+            this.Result = this.Action();
             this.IsExecuting = false;
             this.Executed = true;
+            return this.Result;
         }
 
-        public IActivity CompensateWith(Action action)
+        public IActivityWithResult<T> CompensateWith(Action<T> action)
         {
             if (this.Compensation != null)
             {
@@ -42,7 +45,7 @@ namespace System.Transactions.Workflows
             return this;
         }
 
-        public IActivity CancelWith(Action action)
+        public IActivityWithResult<T> CancelWith(Action action)
         {
             if (this.Cancellation != null)
             {
@@ -56,7 +59,7 @@ namespace System.Transactions.Workflows
         {
             if (this.Compensation != null)
             {
-                this.Compensation();
+                this.Compensation(this.Result);
             }
         }
 

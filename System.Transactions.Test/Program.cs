@@ -13,7 +13,7 @@ namespace System.Transactions.Test
             string wot = "lol";
             using (var context = new WorkflowContext())
             {
-                context.Act(() => wot += "wot").CompensateWith(() => wot = "lol").Execute();
+                context.Act(() => Console.WriteLine("lol")).CompensateWith(() => wot = "lol").Execute();
 
                 Console.WriteLine(wot);
 
