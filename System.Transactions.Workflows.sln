@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Transactions.Workflows", "System.Transactions.Workflows\System.Transactions.Workflows.csproj", "{42189235-2678-431B-8AC9-3110C6B906B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Transactions.Test", "System.Transactions.Test\System.Transactions.Test.csproj", "{A79BB613-F996-454E-9530-AFC7719561C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Transactions.Workflows.Test", "System.Transactions.Workflows.Test\System.Transactions.Workflows.Test.csproj", "{A79BB613-F996-454E-9530-AFC7719561C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Transactions.Test.Unit", "System.Transactions.Test.Unit\System.Transactions.Test.Unit.csproj", "{A36DFA3E-AA7A-421F-A296-EB0DFEE9A346}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Transactions.Workflows.Test.Unit", "System.Transactions.Workflows.Test.Unit\System.Transactions.Workflows.Test.Unit.csproj", "{A36DFA3E-AA7A-421F-A296-EB0DFEE9A346}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

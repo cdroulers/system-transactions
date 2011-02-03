@@ -8,8 +8,8 @@
     <ProjectGuid>{42189235-2678-431B-8AC9-3110C6B906B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.Transactions</RootNamespace>
-    <AssemblyName>System.Transactions</AssemblyName>
+    <RootNamespace>System.Transactions.Workflows</RootNamespace>
+    <AssemblyName>System.Transactions.Workflows</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

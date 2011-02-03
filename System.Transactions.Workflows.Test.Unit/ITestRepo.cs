@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace System.Transactions.Test.Unit
+namespace System.Transactions.Workflows.Test.Unit
 {
     public interface ITestRepo<T>
     {

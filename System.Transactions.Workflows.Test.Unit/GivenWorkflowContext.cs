@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Transactions.Workflows;
 using Moq;
 
-namespace System.Transactions.Test.Unit
+namespace System.Transactions.Workflows.Test.Unit
 {
     [TestClass]
     public class GivenWorkflowContext

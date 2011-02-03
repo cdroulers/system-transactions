@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Transactions.Workflows;
 
-namespace System.Transactions.Test
+namespace System.Transactions.Workflows.Test
 {
     class Program
     {
