@@ -17,6 +17,8 @@ namespace System.Transactions.Workflows.Test
 
                 Console.WriteLine(wot);
 
+                context.Execute(() => "lol");
+
                 context.Complete();
             }
 
