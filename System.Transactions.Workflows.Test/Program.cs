@@ -10,20 +10,6 @@ namespace System.Transactions.Workflows.Test
     {
         static void Main(string[] args)
         {
-            string wot = "lol";
-            using (var context = new WorkflowContext())
-            {
-                context.Act(() => Console.WriteLine("lol")).CompensateWith(() => wot = "lol").Execute();
-
-                Console.WriteLine(wot);
-
-                context.Execute(() => "lol");
-
-                context.Complete();
-            }
-
-            Console.WriteLine(wot);
-
             Console.WriteLine("Done, press shit");
             Console.ReadLine();
         }
