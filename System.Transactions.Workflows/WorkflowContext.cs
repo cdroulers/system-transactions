@@ -31,7 +31,10 @@ namespace System.Transactions.Workflows
 
             this.Completed = true;
 
-            // TODO: Execute complete stuff (is there any?)
+            foreach (var activity in this._activities.Where(a => !a.Confirmed))
+            {
+                activity.Confirm();
+            }
         }
 
         public void RollBack()
@@ -49,7 +52,7 @@ namespace System.Transactions.Workflows
                 throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotRollBack);
             }
 
-            foreach (var activity in this._activities)
+            foreach (var activity in this._activities.Where(a => !a.Confirmed))
             {
                 if (activity.Executed)
                 {
@@ -88,7 +91,13 @@ namespace System.Transactions.Workflows
 
         public void Execute(Action action, Action compensateWith, Action cancelWith)
         {
-            var activity = this.Act(action);
+            IActivity activity;
+            this.Execute(action, compensateWith, cancelWith, out activity);
+        }
+
+        public void Execute(Action action, Action compensateWith, Action cancelWith, out IActivity activity)
+        {
+            activity = this.Act(action);
             if (compensateWith != null)
             {
                 activity.CompensateWith(compensateWith);
@@ -109,7 +118,13 @@ namespace System.Transactions.Workflows
 
         public T Execute<T>(Func<T> action, Action<T> compensateWith, Action cancelWith)
         {
-            var activity = this.Act(action);
+            IActivityWithResult<T> activity;
+            return this.Execute<T>(action, compensateWith, cancelWith, out activity);
+        }
+
+        public T Execute<T>(Func<T> action, Action<T> compensateWith, Action cancelWith, out IActivityWithResult<T> activity)
+        {
+            activity = this.Act(action);
             if (compensateWith != null)
             {
                 activity.CompensateWith(compensateWith);

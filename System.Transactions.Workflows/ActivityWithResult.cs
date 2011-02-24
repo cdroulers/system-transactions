@@ -16,7 +16,7 @@ namespace System.Transactions.Workflows
 
         private T Result { get; set; }
 
-        public ActivityWithResult(WorkflowContext context, Func<T> action)
+        internal ActivityWithResult(WorkflowContext context, Func<T> action)
             : base(context)
         {
             if (action == null)

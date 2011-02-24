@@ -14,7 +14,7 @@ namespace System.Transactions.Workflows
 
         public Action Cancellation { get; private set; }
 
-        public Activity(WorkflowContext context, Action action)
+        internal Activity(WorkflowContext context, Action action)
             : base(context)
         {
             if (action == null)

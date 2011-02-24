@@ -320,5 +320,100 @@ namespace System.Transactions.Workflows.Test.Unit
             _moq.Verify(m => m.CancelSomething(2), Times.Never());
             _moq.Verify(m => m.DoSomething(3), Times.Once());
         }
+
+        [TestMethod]
+        public void When_Confirming_And_Throws_Then_Action_Is_Not_Rolled_Back()
+        {
+            _moq.Setup(m => m.DoSomething(3)).Throws(new ApplicationException(ExceptionMessage));
+
+            IActivity activity = null;
+            IActivity activity2 = null;
+            try
+            {
+                using (_context)
+                {
+                    activity = _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1));
+
+                    activity.Execute();
+
+                    activity2 = _context.Act(() => _moqObject.DoSomething(2)).CancelWith(() => _moqObject.CancelSomething(2));
+                    activity2.Execute();
+
+                    activity.Confirm();
+
+                    _moqObject.DoSomething(3);
+                }
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual(ExceptionMessage, e.Message);
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            Assert.IsTrue(activity.Confirmed);
+            Assert.IsFalse(activity2.Confirmed);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Never());
+            _moq.Verify(m => m.CancelSomething(2), Times.Never());
+            _moq.Verify(m => m.DoSomething(3), Times.Once());
+        }
+
+        [TestMethod]
+        public void When_Completing_Then_Activities_Are_All_Confirmed()
+        {
+            IActivity activity = null;
+            IActivity activity2 = null;
+
+            using (_context)
+            {
+                activity = _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1));
+                activity.Execute();
+
+                activity2 = _context.Act(() => _moqObject.DoSomething(2)).CancelWith(() => _moqObject.CancelSomething(2));
+                activity2.Execute();
+
+                _context.Complete();
+            }
+
+            Assert.IsTrue(_context.Completed);
+            Assert.IsFalse(_context.RolledBack);
+            Assert.IsTrue(activity.Confirmed);
+            Assert.IsTrue(activity2.Confirmed);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Never());
+            _moq.Verify(m => m.CancelSomething(2), Times.Never());
+            _moq.Verify(m => m.DoSomething(3), Times.Never());
+        }
+
+        [TestMethod]
+        public void When_Rollbacking_Then_No_Activities_Are_Confirmed()
+        {
+            IActivity activity = null;
+            IActivity activity2 = null;
+
+            using (_context)
+            {
+                activity = _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1));
+                activity.Execute();
+
+                activity2 = _context.Act(() => _moqObject.DoSomething(2)).CancelWith(() => _moqObject.CancelSomething(2));
+                activity2.Execute();
+
+                _context.RollBack();
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            Assert.IsFalse(activity.Confirmed);
+            Assert.IsFalse(activity2.Confirmed);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Once());
+            _moq.Verify(m => m.CancelSomething(2), Times.Never());
+            _moq.Verify(m => m.DoSomething(3), Times.Never());
+        }
     }
 }

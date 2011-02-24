@@ -12,5 +12,8 @@ namespace System.Transactions.Workflows
         IActivity CancelWith(Action action);
         bool Executed { get; }
         bool IsExecuting { get; }
+
+        void Confirm();
+        bool Confirmed { get; }
     }
 }

@@ -14,12 +14,19 @@ namespace System.Transactions.Workflows
 
         public bool IsExecuting { get; protected set; }
 
-        public BaseActivity(WorkflowContext context)
+        internal BaseActivity(WorkflowContext context)
         {
             this.Context = context;
         }
 
         internal abstract void Compensate();
         internal abstract void Cancel();
+
+        public void Confirm()
+        {
+            this.Confirmed = true;
+        }
+
+        public bool Confirmed { get; private set; }
     }
 }
