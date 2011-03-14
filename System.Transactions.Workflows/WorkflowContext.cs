@@ -135,5 +135,13 @@ namespace System.Transactions.Workflows
             }
             return activity.Execute();
         }
+
+        public void ForEach<T>(IEnumerable<T> items, Action<T> action)
+        {
+            foreach (var item in items)
+            {
+                action(item);
+            }
+        }
     }
 }

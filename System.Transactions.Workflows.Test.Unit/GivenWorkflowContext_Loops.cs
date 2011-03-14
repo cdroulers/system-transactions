@@ -114,11 +114,7 @@ namespace System.Transactions.Workflows.Test.Unit
             {
                 foreach (var item in ForEachListReferenceTypes)
                 {
-                    _context.Act(() =>
-                        this._moqReferenceObject.DoSomething(item)
-                    ).CompensateWith(() =>
-                        this._moqReferenceObject.RevertSomething(item)
-                    ).Execute();
+                    _context.Act(() => this._moqReferenceObject.DoSomething(item)).CompensateWith(() => this._moqReferenceObject.RevertSomething(item)).Execute();
                 }
 
                 _context.RollBack();
@@ -142,11 +138,7 @@ namespace System.Transactions.Workflows.Test.Unit
                 foreach (var item in ForEachListReferenceTypes)
                 {
                     var temp = item;
-                    _context.Act(() =>
-                        this._moqReferenceObject.DoSomething(temp)
-                    ).CompensateWith(() =>
-                        this._moqReferenceObject.RevertSomething(temp)
-                    ).Execute();
+                    _context.Act(() => this._moqReferenceObject.DoSomething(temp)).CompensateWith(() => this._moqReferenceObject.RevertSomething(temp)).Execute();
                 }
 
                 _context.RollBack();
@@ -160,6 +152,52 @@ namespace System.Transactions.Workflows.Test.Unit
             _moqReference.Verify(m => m.RevertSomething(new TempClass("1")), Times.Once());
             _moqReference.Verify(m => m.RevertSomething(new TempClass("2")), Times.Once());
             _moqReference.Verify(m => m.RevertSomething(new TempClass("3")), Times.Once());
+        }
+
+        [TestMethod]
+        public void When_ForEach_Looping_Reference_Types_And_RollBacking_Then_RollBack_Works_With_Context_ForEach()
+        {
+            using (_context)
+            {
+                _context.ForEach(ForEachListReferenceTypes, item =>
+                {
+                    _context.Act(() => this._moqReferenceObject.DoSomething(item)).CompensateWith(() => this._moqReferenceObject.RevertSomething(item)).Execute();
+                });
+
+                _context.RollBack();
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moqReference.Verify(m => m.DoSomething(new TempClass("1")), Times.Once());
+            _moqReference.Verify(m => m.DoSomething(new TempClass("2")), Times.Once());
+            _moqReference.Verify(m => m.DoSomething(new TempClass("3")), Times.Once());
+            _moqReference.Verify(m => m.RevertSomething(new TempClass("1")), Times.Once());
+            _moqReference.Verify(m => m.RevertSomething(new TempClass("2")), Times.Once());
+            _moqReference.Verify(m => m.RevertSomething(new TempClass("3")), Times.Once());
+        }
+
+        [TestMethod]
+        public void When_ForEach_Looping_Value_Types_And_RollBacking_Then_RollBack_Works_With_Context_ForEach()
+        {
+            using (_context)
+            {
+                _context.ForEach(ForEachListValueTypes, item =>
+                {
+                    _context.Act(() => this._moqObject.DoSomething(item)).CompensateWith(() => this._moqObject.RevertSomething(item)).Execute();
+                });
+
+                _context.RollBack();
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moq.Verify(m => m.DoSomething(1), Times.Once());
+            _moq.Verify(m => m.DoSomething(2), Times.Once());
+            _moq.Verify(m => m.DoSomething(3), Times.Once());
+            _moq.Verify(m => m.RevertSomething(1), Times.Once());
+            _moq.Verify(m => m.RevertSomething(2), Times.Once());
+            _moq.Verify(m => m.RevertSomething(3), Times.Once());
         }
     }
 }
