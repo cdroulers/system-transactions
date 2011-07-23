@@ -115,11 +115,38 @@ namespace System.Transactions.Workflows.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Workflow disposed, cannot act..
+        /// </summary>
+        internal static string WorkflowDisposedCannotAct {
+            get {
+                return ResourceManager.GetString("WorkflowDisposedCannotAct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Workflow disposed, cannot complete..
         /// </summary>
         internal static string WorkflowDisposedCannotComplete {
             get {
                 return ResourceManager.GetString("WorkflowDisposedCannotComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow disposed, cannot execute..
+        /// </summary>
+        internal static string WorkflowDisposedCannotExecute {
+            get {
+                return ResourceManager.GetString("WorkflowDisposedCannotExecute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workflow disposed, cannot iterate..
+        /// </summary>
+        internal static string WorkflowDisposedCannotForEach {
+            get {
+                return ResourceManager.GetString("WorkflowDisposedCannotForEach", resourceCulture);
             }
         }
         

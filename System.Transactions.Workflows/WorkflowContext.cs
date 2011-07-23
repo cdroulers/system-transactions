@@ -16,6 +16,10 @@ namespace System.Transactions.Workflows
 
         public void Complete()
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotComplete);
+            }
             if (this.Completed)
             {
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyCompletedCannotCompleteAgain);
@@ -23,10 +27,6 @@ namespace System.Transactions.Workflows
             if (this.RolledBack)
             {
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyRolledBackCannotComplete);
-            }
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotComplete);
             }
 
             this.Completed = true;
@@ -39,6 +39,10 @@ namespace System.Transactions.Workflows
 
         public void RollBack()
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotRollBack);
+            }
             if (this.Completed)
             {
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyCompletedCannotRollBack);
@@ -46,10 +50,6 @@ namespace System.Transactions.Workflows
             if (this.RolledBack)
             {
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyRolledBackCannotRollBackAgain);
-            }
-            if (this._disposed)
-            {
-                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotRollBack);
             }
 
             foreach (var activity in this._activities.Where(a => !a.Confirmed))
@@ -84,6 +84,11 @@ namespace System.Transactions.Workflows
 
         public IActivity Act(Action action)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotAct);
+            }
+
             var activity = new Activity(this, action);
             this._activities.Add(activity);
             return activity;
@@ -91,12 +96,22 @@ namespace System.Transactions.Workflows
 
         public void Execute(Action action, Action compensateWith, Action cancelWith)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotExecute);
+            }
+
             IActivity activity;
             this.Execute(action, compensateWith, cancelWith, out activity);
         }
 
         public void Execute(Action action, Action compensateWith, Action cancelWith, out IActivity activity)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotExecute);
+            }
+
             activity = this.Act(action);
             if (compensateWith != null)
             {
@@ -111,6 +126,11 @@ namespace System.Transactions.Workflows
 
         public IActivityWithResult<T> Act<T>(Func<T> action)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotAct);
+            }
+
             var activity = new ActivityWithResult<T>(this, action);
             this._activities.Add(activity);
             return activity;
@@ -118,12 +138,22 @@ namespace System.Transactions.Workflows
 
         public T Execute<T>(Func<T> action, Action<T> compensateWith, Action cancelWith)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotExecute);
+            }
+
             IActivityWithResult<T> activity;
             return this.Execute<T>(action, compensateWith, cancelWith, out activity);
         }
 
         public T Execute<T>(Func<T> action, Action<T> compensateWith, Action cancelWith, out IActivityWithResult<T> activity)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotExecute);
+            }
+
             activity = this.Act(action);
             if (compensateWith != null)
             {
@@ -138,6 +168,11 @@ namespace System.Transactions.Workflows
 
         public void ForEach<T>(IEnumerable<T> items, Action<T> action)
         {
+            if (this._disposed)
+            {
+                throw new ObjectDisposedException(Properties.Strings.WorkflowDisposedCannotForEach);
+            }
+
             foreach (var item in items)
             {
                 action(item);

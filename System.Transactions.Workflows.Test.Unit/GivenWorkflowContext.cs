@@ -3,11 +3,11 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Transactions.Workflows;
 using Moq;
 
 namespace System.Transactions.Workflows.Test.Unit
 {
+    // ReSharper disable InconsistentNaming
     [TestClass]
     public class GivenWorkflowContext
     {
@@ -414,6 +414,40 @@ namespace System.Transactions.Workflows.Test.Unit
             _moq.Verify(m => m.RevertSomething(1), Times.Once());
             _moq.Verify(m => m.CancelSomething(2), Times.Never());
             _moq.Verify(m => m.DoSomething(3), Times.Never());
+        }
+
+        [TestMethod]
+        public void When_Disposed_Then_Actions_Throw()
+        {
+            using (_context)
+            {
+
+            }
+
+            var temp = new Action[]
+            {
+                () => _context.Act(() => ""),
+                () => _context.Complete(),
+                () => _context.RollBack(),
+                () => _context.Execute(() => "", null, null)
+            };
+
+            foreach (var t in temp)
+            {
+                try
+                {
+                    t();
+                }
+                catch (ObjectDisposedException)
+                {
+                    continue;
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("Didn't throw proper Exception: {0} - {1}", e.GetType().Name, e.Message);
+                }
+                Assert.Fail("No exception thrown!");
+            }
         }
     }
 }
