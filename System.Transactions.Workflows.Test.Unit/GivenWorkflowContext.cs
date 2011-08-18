@@ -449,5 +449,33 @@ namespace System.Transactions.Workflows.Test.Unit
                 Assert.Fail("No exception thrown!");
             }
         }
+
+        [TestMethod]
+        public void When_rollbacking_Then_order_is_properly_reversed()
+        {
+            string value = "";
+            _moq.Setup(x => x.RevertSomething(It.IsAny<int>())).Callback((int i) => value += i.ToString());
+            //_moq.Setup(x => x.RevertSomething(2)).Callback(() => value = "2");
+            try
+            {
+                using (_context)
+                {
+                    _context.Act(() => _moqObject.DoSomething(1)).CompensateWith(() => _moqObject.RevertSomething(1)).Execute();
+                    _context.Act(() => _moqObject.DoSomething(2)).CompensateWith(() => _moqObject.RevertSomething(2)).Execute();
+
+                    throw new ApplicationException(ExceptionMessage);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Assert.AreEqual(ExceptionMessage, e.Message);
+            }
+
+            Assert.IsFalse(_context.Completed);
+            Assert.IsTrue(_context.RolledBack);
+            _moq.Verify(m => m.DoSomething(It.IsAny<int>()), Times.Exactly(2));
+            _moq.Verify(m => m.RevertSomething(It.IsAny<int>()), Times.Exactly(2));
+            Assert.AreEqual<string>("21", value); // Should have reverted the call with 2 first!
+        }
     }
 }
