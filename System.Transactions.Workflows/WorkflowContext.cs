@@ -52,7 +52,7 @@ namespace System.Transactions.Workflows
                 throw new InvalidOperationException(Properties.Strings.WorkflowAlreadyRolledBackCannotRollBackAgain);
             }
 
-            foreach (var activity in this._activities.Where(a => !a.Confirmed).Reverse())
+            foreach (var activity in this._activities.Where(a => !a.Confirmed).OrderByDescending(a => a.ExecutedOn))
             {
                 if (activity.Executed)
                 {

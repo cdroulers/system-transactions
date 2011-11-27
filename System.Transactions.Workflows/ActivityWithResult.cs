@@ -31,7 +31,7 @@ namespace System.Transactions.Workflows
             this.IsExecuting = true;
             this.Result = this.Action();
             this.IsExecuting = false;
-            this.Executed = true;
+            this.ExecutedOn = DateTime.UtcNow;
             return this.Result;
         }
 

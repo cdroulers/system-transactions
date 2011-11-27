@@ -10,7 +10,8 @@ namespace System.Transactions.Workflows
     {
         public WorkflowContext Context { get; private set; }
 
-        public bool Executed { get; protected set; }
+        public bool Executed { get { return this.ExecutedOn.HasValue; } }
+        public DateTime? ExecutedOn { get; protected set; }
 
         public bool IsExecuting { get; protected set; }
 

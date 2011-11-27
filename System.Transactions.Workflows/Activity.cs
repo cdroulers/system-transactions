@@ -29,7 +29,7 @@ namespace System.Transactions.Workflows
             this.IsExecuting = true;
             this.Action();
             this.IsExecuting = false;
-            this.Executed = true;
+            this.ExecutedOn = DateTime.UtcNow;
         }
 
         public IActivity CompensateWith(Action action)
