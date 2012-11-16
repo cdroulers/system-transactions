@@ -6,3 +6,6 @@ relre:vsmdi
 relre:TestResults
 relre:.csproj.user
 relre:ReSharper
+packages/
+builds/
+NuGet.exe
